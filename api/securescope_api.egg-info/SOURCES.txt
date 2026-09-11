@@ -1,0 +1,12 @@
+pyproject.toml
+app/__init__.py
+app/analyzer.py
+app/breach.py
+app/main.py
+app/models.py
+securescope_api.egg-info/PKG-INFO
+securescope_api.egg-info/SOURCES.txt
+securescope_api.egg-info/dependency_links.txt
+securescope_api.egg-info/requires.txt
+securescope_api.egg-info/top_level.txt
+tests/test_analyzer.py
