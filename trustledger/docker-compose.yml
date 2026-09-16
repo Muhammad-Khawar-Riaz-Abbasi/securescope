@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: trustledger
+      POSTGRES_USER: trustledger
+      POSTGRES_PASSWORD: trustledger
+    ports: ["5432:5432"]
+    volumes: ["trustledger_pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trustledger -d trustledger"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://trustledger:trustledger@db:5432/trustledger
+      CORS_ORIGINS: http://localhost:5173,http://localhost:8080
+      ENVIRONMENT: development
+    ports: ["8000:8000"]
+    depends_on:
+      db:
+        condition: service_healthy
+  web:
+    build: ./frontend
+    ports: ["8080:80"]
+    depends_on: [api]
+volumes:
+  trustledger_pgdata:
