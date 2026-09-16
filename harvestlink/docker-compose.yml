@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: harvestlink
+      POSTGRES_USER: harvestlink
+      POSTGRES_PASSWORD: harvestlink
+    volumes: [harvestlink_pg:/var/lib/postgresql/data]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U harvestlink -d harvestlink"], interval: 5s, timeout: 5s, retries: 10}
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://harvestlink:harvestlink@db:5432/harvestlink
+      CORS_ORIGINS: http://localhost:5173
+      SEED_DEMO: "true"
+    ports: ["8000:8000"]
+    depends_on: {db: {condition: service_healthy}}
+  frontend:
+    build: ./frontend
+    ports: ["5173:80"]
+    depends_on: [api]
+volumes:
+  harvestlink_pg:
